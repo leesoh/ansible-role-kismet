@@ -1,0 +1,22 @@
+---
+kismet_git_location: "/opt"
+kismet_packages:
+  - build-essential
+  - git
+  - libcap-dev
+  - libdw-dev
+  - libmicrohttpd-dev
+  - libncurses5-dev
+  - libnl-3-dev
+  - libnl-genl-3-dev
+  - libnm-dev
+  - libpcap-dev
+  - libprotobuf-c-dev
+  - libprotobuf-dev
+  - libsensors4-dev
+  - libsqlite3-dev
+  - pkg-config
+  - protobuf-c-compiler
+  - protobuf-compiler
+  - python-datetime
+  - zlib1g-dev

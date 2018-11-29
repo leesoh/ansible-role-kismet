@@ -1,0 +1,57 @@
+---
+- set_fact:
+    ansible_distro: "{{ ansible_distribution|lower|replace(' ', '_')|replace('/', '-') }}"
+
+- name: Gather OS-specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ ansible_distro }}-{{ansible_distribution_version|lower|replace('/', '_') }}.yml"
+      - "{{ ansible_distro }}-{{ ansible_distribution_release }}.yml"
+      - "{{ ansible_distro }}-{{ansible_distribution_major_version|lower|replace('/', '_') }}.yml"
+      - "{{ ansible_distro }}.yml"
+      - "{{ ansible_os_family|lower }}.yml"
+
+- name: Install packages
+  become: true
+  with_items: "{{ kismet_packages }}"
+  package:
+    name: "{{ item }}"
+    update_cache: true
+    state: latest
+
+- name: Clone Kismet
+  become: true
+  git:
+    repo: https://www.kismetwireless.net/git/kismet.git
+    dest: "{{ kismet_git_location }}/kismet/"
+    update: yes
+  register: kismet
+
+- name: Configure Kismet
+  become: true
+  when: kismet.changed
+  shell: ./configure
+  args:
+    chdir: "{{ kismet_git_location }}/kismet/"
+
+- name: Compile Kismet
+  become: true
+  when: kismet.changed
+  shell: "make -j{{ ansible_processor_vcpus }} suidinstall"
+  args:
+    chdir: "{{ kismet_git_location }}/kismet/"
+
+- name: Add user to Kismet group
+  become: true
+  when: kismet.changed
+  user:
+    name: "{{ ansible_ssh_user }}"
+    groups: kismet
+    append: yes
+
+- name: Install simplekml
+  when: kismet.changed
+  pip:
+    name: simplekml
+    state: latest

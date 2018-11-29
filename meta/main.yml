@@ -1,0 +1,20 @@
+galaxy_info:
+  author: liam somerville
+  role_name: leesoh.kismet
+  description: Kismet and GISKismet wireless testing tools.
+  license: BSD-3
+  min_ansible_version: 2.1
+  platforms:
+  - name: Ubuntu
+    versions:
+    - bionic
+    - artful
+    - zesty
+    - xenial
+
+  galaxy_tags:
+    - pentest
+    - wireless
+
+dependencies:
+  - leesoh.git
